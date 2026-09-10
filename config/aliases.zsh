@@ -1,0 +1,22 @@
+alias c="code ."
+alias vsc="code --new-window"
+alias zshconfig="code ${CHUI_ROOT:-$HOME/github/chui}/config/zshrc"
+alias ohmyzsh="code ~/.oh-my-zsh"
+alias chuicfg="code ${CHUI_ROOT:-$HOME/github/chui}"
+
+alias gs="git status"
+alias glog="git log --oneline --graph --decorate -10"
+alias gd="git diff"
+alias lg="lazygit"
+
+alias ls="eza --icons --group-directories-first"
+alias ll="eza -lah --icons --group-directories-first --git"
+alias la="eza -la --icons --group-directories-first"
+alias lt="eza --tree --level=2 --icons"
+alias cat="bat --paging=never --style=plain"
+alias ff="fastfetch"
+alias zj="zellij"
+alias btop="btop"
+
+alias ..="cd .."
+alias ...="cd ../.."

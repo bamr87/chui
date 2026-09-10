@@ -1,0 +1,6 @@
+.DS_Store
+backups/
+*.local
+.env
+*.zwc
+.zcompdump*
