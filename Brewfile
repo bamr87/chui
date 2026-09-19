@@ -16,5 +16,6 @@ brew "btop"
 brew "lazygit"
 brew "fastfetch"
 brew "zellij"
+brew "gum"
 
 cask "font-meslo-lg-nerd-font"

@@ -25,10 +25,12 @@ restore() {
 }
 
 restore "$SRC/.zshrc" "$HOME/.zshrc"
+restore "$SRC/.zshenv" "$HOME/.zshenv"
 restore "$SRC/.zprofile" "$HOME/.zprofile"
 restore "$SRC/.p10k.zsh" "$HOME/.p10k.zsh"
 restore "$SRC/.gitconfig" "$HOME/.gitconfig"
 restore "$SRC/zellij/config.kdl" "$HOME/.config/zellij/config.kdl"
+restore "$SRC/vscode/keybindings.json" "$HOME/Library/Application Support/Code/User/keybindings.json"
 
 if [[ -d $SRC/oh-my-zsh-custom && -d $HOME/.oh-my-zsh/custom ]]; then
   rm -rf "$HOME/.oh-my-zsh/custom"

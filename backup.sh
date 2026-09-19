@@ -16,12 +16,14 @@ copy_if() {
 }
 
 copy_if "$HOME/.zshrc" "$DEST/.zshrc"
+copy_if "$HOME/.zshenv" "$DEST/.zshenv"
 copy_if "$HOME/.zshrc.pre-oh-my-zsh" "$DEST/.zshrc.pre-oh-my-zsh"
 copy_if "$HOME/.zprofile" "$DEST/.zprofile"
 copy_if "$HOME/.zlogin" "$DEST/.zlogin"
 copy_if "$HOME/.p10k.zsh" "$DEST/.p10k.zsh"
 copy_if "$HOME/.gitconfig" "$DEST/.gitconfig"
 copy_if "$HOME/.config/zellij/config.kdl" "$DEST/zellij/config.kdl"
+copy_if "$HOME/Library/Application Support/Code/User/keybindings.json" "$DEST/vscode/keybindings.json"
 
 if [[ -d $HOME/.oh-my-zsh/custom ]]; then
   cp -a "$HOME/.oh-my-zsh/custom/." "$DEST/oh-my-zsh-custom/"

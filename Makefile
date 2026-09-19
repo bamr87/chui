@@ -1,4 +1,4 @@
-.PHONY: backup install uninstall check brew
+.PHONY: backup install uninstall check brew update tui
 
 backup:
 	./backup.sh
@@ -14,3 +14,9 @@ check:
 
 brew:
 	brew bundle install --file=Brewfile
+
+update:
+	./tui.sh update
+
+tui:
+	./tui.sh

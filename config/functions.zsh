@@ -24,36 +24,57 @@ note() {
 }
 
 chui() {
-  local cmd=${1:-dash}
+  local cmd=${1:-menu}
   case $cmd in
-    dash|"")
-      local w=56
+    menu|tui|"")
+      "${CHUI_ROOT}/tui.sh" menu
+      [[ -f $HOME/.config/chui/local.zsh ]] && source "$HOME/.config/chui/local.zsh"
+      [[ -f $CHUI_ROOT/config/aliases.zsh ]] && source "$CHUI_ROOT/config/aliases.zsh"
+      ;;
+    update)
+      "${CHUI_ROOT}/tui.sh" update
+      [[ -f $HOME/.config/chui/local.zsh ]] && source "$HOME/.config/chui/local.zsh"
+      [[ -f $CHUI_ROOT/config/aliases.zsh ]] && source "$CHUI_ROOT/config/aliases.zsh"
+      ;;
+    configure)
+      "${CHUI_ROOT}/tui.sh" configure
+      [[ -f $HOME/.config/chui/local.zsh ]] && source "$HOME/.config/chui/local.zsh"
+      [[ -f $CHUI_ROOT/config/aliases.zsh ]] && source "$CHUI_ROOT/config/aliases.zsh"
+      ;;
+    home)
+      "${CHUI_ROOT}/config/home.sh" "${@:2}"
+      ;;
+    dash)
       local line
       line=$(printf '─%.0s' {1..56})
       print -P "%F{cyan}╭${line}╮%f"
-      print -P "%F{cyan}│%f  %BCHUI%b  ${HOST:r}  $(date '+%Y-%m-%d %H:%M')%F{cyan}│%f"
+      print -P "%F{cyan}│%f  %BCHUI%b  ${HOST:r}  $(date '+%Y-%m-%d %H:%M')"
       print -P "%F{cyan}├${line}┤%f"
       print -P "%F{cyan}│%f  shell   %F{green}zsh ${ZSH_VERSION}%f + oh-my-zsh + p10k"
-      print -P "%F{cyan}│%f  tools   eza bat fd fzf zoxide delta"
+      print -P "%F{cyan}│%f  tools   eza bat fd fzf zoxide delta gum"
       print -P "%F{cyan}│%f  tui     zellij  btop  lazygit  fastfetch"
-      print -P "%F{cyan}│%f  git     $(command git rev-parse --abbrev-ref HEAD 2>/dev/null || echo '—')  $(command git status -sb 2>/dev/null | head -1)"
-      if command ssh -o ConnectTimeout=2 -o BatchMode=yes forge true 2>/dev/null; then
-        print -P "%F{cyan}│%f  forge   %F{green}up%f"
-      else
-        print -P "%F{cyan}│%f  forge   %F{red}down%f  (forge wake)"
-      fi
-      print -P "%F{cyan}│%f  root    ${CHUI_ROOT:t}  ${CHUI_ROOT}"
+      print -P "%F{cyan}│%f  git     $(command git rev-parse --abbrev-ref HEAD 2>/dev/null || echo '—')"
+      print -P "%F{cyan}│%f  root    ${CHUI_ROOT}"
       print -P "%F{cyan}╰${line}╯%f"
-      print "  chui help   chui check   zj   lg   btop   forge"
+      print "  chui        menu (update / configure)"
       ;;
     help|-h|--help)
       cat <<'EOF'
-chui              dashboard
+chui              interactive menu
+chui update       pull + reinstall
+chui configure    icons / splash / font / theme
+chui home         \$HOME map (visible + hidden + next level)
+chui home open    maximized zellij layout
+chui home sweep   move strays to ~/Documents/Archive
+chui dash         status box
+chui keys         keyboard shortcuts
+chui doctor       font / icons / tools
 chui check        verify install
 chui backup       snapshot configs
 chui restore      restore latest backup
-chui help         this list
 
+hm                chui home
+zh                chui home open
 zj                zellij workspace
 lg                lazygit
 btop              process TUI
@@ -62,6 +83,18 @@ forge             remote dev box
 proj <name>       jump to ~/github/<name>
 note <text>       append to ~/.dev-notes
 EOF
+      ;;
+    keys)    command bat --paging=never --style=plain "${CHUI_ROOT}/docs/KEYS.md" 2>/dev/null || command cat "${CHUI_ROOT}/docs/KEYS.md" ;;
+    doctor)
+      print -P "%Bchui doctor%b"
+      local font
+      font=$(osascript -e 'tell application "Terminal" to get font name of default settings' 2>/dev/null || echo unknown)
+      if [[ $font == *Meslo* || $font == *Nerd* || $font == *NF* ]]; then
+        print -P "  %F{green}ok%f  font  $font"
+      else
+        print -P "  %F{red}!!%f  font  $font  (chui → Configure → Apply font)"
+      fi
+      "${CHUI_ROOT}/check.sh"
       ;;
     check)   "${CHUI_ROOT}/check.sh" ;;
     backup)  "${CHUI_ROOT}/backup.sh" ;;

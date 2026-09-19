@@ -42,6 +42,9 @@ Symlinks:
 | `~/.p10k.zsh` | `config/p10k.zsh` |
 | `~/.oh-my-zsh/custom/forge.zsh` | `custom/forge.zsh` |
 | `~/.config/zellij/config.kdl` | `config/zellij/config.kdl` |
+| `~/.config/zellij/layouts/home.kdl` | `config/zellij/layouts/home.kdl` |
+| `~/.local/bin/chui` | `tui.sh` |
+| `~/.local/bin/chui-home` | `config/home.sh` |
 
 ## Restore
 
@@ -58,3 +61,15 @@ Symlinks:
 4. `make install`
 5. Font: MesloLGS NF
 6. `exec zsh` then `chui check`
+7. Quit and reopen Terminal.app (Cmd/Opt key map)
+
+`install.sh` applies Apple Terminal + VS Code terminal keybindings.
+
+## Update from the TUI
+
+```bash
+chui              # menu
+chui update       # pull + backup + install
+```
+
+User prefs: `~/.config/chui/local.zsh` (icons, splash, font, bat theme).

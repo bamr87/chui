@@ -4,3 +4,4 @@ backups/
 .env
 *.zwc
 .zcompdump*
+config/local.zsh

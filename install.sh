@@ -72,9 +72,14 @@ clone_if_missing https://github.com/zsh-users/zsh-syntax-highlighting.git "$ZSH_
 clone_if_missing https://github.com/Aloxaf/fzf-tab "$ZSH_CUSTOM/plugins/fzf-tab"
 
 link "$CHUI_ROOT/config/zshrc" "$HOME/.zshrc"
+link "$CHUI_ROOT/config/zshenv" "$HOME/.zshenv"
 link "$CHUI_ROOT/config/p10k.zsh" "$HOME/.p10k.zsh"
 link "$CHUI_ROOT/custom/forge.zsh" "$ZSH_CUSTOM/forge.zsh"
 link "$CHUI_ROOT/config/zellij/config.kdl" "$HOME/.config/zellij/config.kdl"
+link "$CHUI_ROOT/config/zellij/layouts/home.kdl" "$HOME/.config/zellij/layouts/home.kdl"
+mkdir -p "$HOME/.local/bin"
+link "$CHUI_ROOT/tui.sh" "$HOME/.local/bin/chui"
+link "$CHUI_ROOT/config/home.sh" "$HOME/.local/bin/chui-home"
 
 if command -v git >/dev/null; then
   git config --global core.pager delta
@@ -85,16 +90,16 @@ if command -v git >/dev/null; then
   log "git delta configured"
 fi
 
-if command -v osascript >/dev/null && [[ "${TERM_PROGRAM:-}" == "Apple_Terminal" ]]; then
-  osascript <<'APPLESCRIPT' >/dev/null 2>&1 || true
-tell application "Terminal"
-  try
-    set font name of default settings to "MesloLGS NF"
-    set font size of default settings to 13
-  end try
-end tell
-APPLESCRIPT
-  log "terminal font (best-effort): MesloLGS NF"
+if command -v osascript >/dev/null; then
+  log "terminal font"
+  bash "$CHUI_ROOT/config/terminal/macos-font.sh" || true
+fi
+
+if command -v python3 >/dev/null; then
+  log "macos terminal keys"
+  python3 "$CHUI_ROOT/config/terminal/macos-keys.py"
+  log "vscode terminal keys"
+  python3 "$CHUI_ROOT/config/terminal/vscode-keys.py"
 fi
 
 log "done. open a new terminal or: exec zsh"

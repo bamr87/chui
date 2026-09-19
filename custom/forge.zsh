@@ -15,6 +15,7 @@
 #   forge top                btop over ssh
 #   forge es <path>          (ELK stopped — unused)
 #   forge sync [dir]         rsync a repo (default: cwd) to forge:dev/<name>
+#   forge ci [run|list|…]    invoke GitHub workflows on forge via act (forge-ci)
 #   forge ui <app>           open grafana|portainer|adminer|site|glances in the browser
 #   forge help               this list
 
@@ -78,6 +79,12 @@ forge() {
       rsync -a --info=progress2 --exclude node_modules --exclude _site --exclude .jekyll-cache \
         --exclude __pycache__ --exclude .venv --exclude .next --exclude test-results \
         "$src/" "forge:dev/$name/" ;;
+    ci)
+      if (( $# == 0 )); then
+        command ssh -t forge "forge-ci run ${PWD:t} #nomirror"
+      else
+        command ssh -t forge "forge-ci $* #nomirror"
+      fi ;;
     ui)
       local -A urls=(
         grafana   "http://forge.local:3000"
@@ -88,18 +95,63 @@ forge() {
       )
       [[ -n ${urls[$1]:-} ]] && open ${urls[$1]} || { echo "apps: ${(k)urls}" >&2; return 1 } ;;
     help|*)
-      sed -n '4,19p' ${(%):-%x} | sed 's/^# \{0,3\}//' ;;
+      sed -n '4,20p' ${(%):-%x} | sed 's/^# \{0,3\}//' ;;
   esac
 }
 
-# Tab completion for the subcommands.
-_forge_complete() {
-  local -a subs=(console shell wake status ps sh logs restart stacks compose health journal net top es sync ui help)
-  if (( CURRENT == 2 )); then compadd -a subs
-  elif [[ $words[2] == ui ]]; then compadd grafana portainer adminer site glances
-  fi
+_forge() {
+  local -a cmds apps
+  cmds=(
+    'console:join the console tmux session'
+    'shell:private zsh on forge, outside tmux'
+    'wake:power on (Wake-on-LAN)'
+    'status:reachability + health'
+    'ps:visual container status'
+    'sh:shell into a container'
+    'logs:follow container logs'
+    'restart:restart a container'
+    'stacks:compose projects on the box'
+    'compose:docker compose in ~/dev/<proj>'
+    'health:forge-health checks'
+    'journal:journal report'
+    'net:ports, connections, traffic'
+    'top:btop over ssh'
+    'es:elasticsearch query (unused)'
+    'sync:rsync cwd to forge:dev/<name>'
+    'ci:invoke GitHub workflows via act'
+    'ui:open grafana/portainer/adminer/site/glances'
+    'help:this list'
+  )
+  apps=(
+    'grafana:dashboards :3000'
+    'portainer:docker UI :9443'
+    'adminer:database UI :8080'
+    'site:jekyll :4000'
+    'glances:system monitor :61209'
+  )
+  local state
+  _arguments -C \
+    '1:forge command:->cmds' \
+    '*::arg:->args'
+  case $state in
+    cmds) _describe -t commands 'forge' cmds ;;
+    args)
+      case $words[1] in
+        ui) _describe -t apps 'app' apps ;;
+        sh|logs|restart)
+          local cache="${XDG_CACHE_HOME:-$HOME/.cache}/chui/forge-ps"
+          mkdir -p "${cache:h}"
+          if [[ ! -s $cache ]] || (( $(date +%s) - $(stat -f %m "$cache" 2>/dev/null || echo 0) > 60 )); then
+            command ssh -o ConnectTimeout=1 -o BatchMode=yes forge "docker ps --format '{{.Names}}' #nomirror" >|"$cache" 2>/dev/null || true
+          fi
+          [[ -s $cache ]] && compadd -X 'container' -- ${(f)"$(<$cache)"}
+          ;;
+        sync) _files -/ ;;
+        compose) _files -W "$HOME/github" -/ ;;
+      esac
+      ;;
+  esac
 }
-compdef _forge_complete forge 2>/dev/null
 
-# Let `forge es /packetbeat-*/_count` work unquoted — don't glob forge's args.
 alias forge='noglob forge'
+compdef _forge forge
