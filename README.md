@@ -1,6 +1,20 @@
 # chui
 
+> Rebuildable macOS terminal setup: Oh My Zsh, Powerlevel10k, Zellij and modern CLI tools, with backup and restore.
+
+[![License](https://img.shields.io/github/license/bamr87/chui)](LICENSE)
+
+## Overview
+
 Rebuildable terminal CHUI for macOS: Oh My Zsh + Powerlevel10k + modern CLI + Zellij.
+
+## Features
+
+- Idempotent `install.sh` that installs the Brewfile (eza, bat, fd, fzf, zoxide, git-delta, btop, lazygit, zellij, gum and the MesloLGS Nerd Font) and links the configs
+- Oh My Zsh with Powerlevel10k, plus aliases, functions and key bindings for Apple Terminal and VS Code
+- A `chui` menu to update and configure icons, splash, font and theme
+- `chui home` maps `$HOME` and sweeps strays into `~/Documents/Archive`
+- `make backup` / `chui restore` snapshot configs to `~/.chui-backups/` and roll them back
 
 ## From scratch
 
@@ -41,8 +55,7 @@ Maximize the window, then `hm`. Finder hides dotfiles; a plain `ls` hides the ne
 
 **Keys:** ⌘←/→ line · ⌥←/→ word · ⌘⌫ kill to start · ⌃R fuzzy history. Full list: [docs/KEYS.md](docs/KEYS.md).
 
-## Layout
-
+## Project structure
 ```
 Brewfile              packages
 install.sh            idempotent bootstrap
@@ -68,3 +81,27 @@ Backups live in `~/.chui-backups/` (not in git). Secrets are never committed.
 ```bash
 cd ~/github/chui && make uninstall
 ```
+
+## Development
+
+```bash
+make check     # smoke test (check.sh)
+make update    # git pull + reinstall
+```
+
+## Contributing
+
+Contributions are welcome via pull request. Use [Conventional Commits](https://www.conventionalcommits.org/) and keep the CI checks green. The fleet-wide workflow is described in the hub's [CONTRIBUTING.md](https://github.com/bamr87/bamr87/blob/main/CONTRIBUTING.md).
+
+## Changelog
+
+Notable changes are recorded in [CHANGELOG.md](CHANGELOG.md); the full record is in the [commit history](https://github.com/bamr87/chui/commits/main).
+
+## License
+
+Released under the [MIT License](LICENSE).
+
+---
+
+<!-- bamr87-portfolio-footer -->
+Part of the [bamr87 portfolio](https://github.com/bamr87) — browse every project on [Amr's GitHub profile](https://github.com/bamr87).
